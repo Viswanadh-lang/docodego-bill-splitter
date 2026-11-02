@@ -155,3 +155,15 @@ You must understand every line you submit. We check this with your video and in 
 5. Paste the repository link and the video link in the application form.
 
 We will run `pnpm install && pnpm check && pnpm typecheck && pnpm test` on your repository.
+
+
+## Decisions
+
+### 1. Store money as integer cents
+I chose to store all bill amounts and shares as integer cents instead of decimal values. This avoids floating-point precision issues and ensures that the total of all shares always matches the original bill amount.
+
+### 2. Use database constraints and conditional updates
+I used foreign keys, CHECK constraints, and UNIQUE constraints to protect data integrity. For payments, I used a conditional database update so that two simultaneous requests cannot successfully pay the same share.
+
+### 3. Use idempotency keys for payments
+I used an `Idempotency-Key` header for payment requests. If the same request is sent again with the same key, the API returns the existing payment result instead of processing the payment twice. This makes payment retries safer.
